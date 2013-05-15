@@ -1,0 +1,255 @@
+==================================
+Contributing to the MeeGo UX Theme
+==================================
+
+This is a simple step by step process on how to get set up to
+contribute to the MeeGo UX Theme. 
+
+Please keep in mind that for contributed assets we need one for every resolution, so the
+theme will work on any device.
+
+Step 0-4 are a one-time process. Steps 5-9 are part of your daily workflow.
+
+
+0. Get Git
+
+     Mac:
+     Install the package from http://code.google.com/p/git-osx-installer/downloads/list
+
+     Fedora:
+     "yum install git"
+
+     Ubuntu:  
+     "apt-get install git"
+
+
+1. Get a Gitorious account
+
+    You can sign up at http://www.gitorious.org/
+
+
+2. Add your SSH public key to your account
+
+    You can do this by going to your Dashboard and click "Manage
+    SSH keys", then "Add SSH key". Run " open /Users/<USER>/.ssh/id_rsa.pub"
+    to see your public key. Paste it into the field on the website.
+
+    If you don't have a SSH key pair yet, you can create one like this:
+    "ssh-keygen -t RSA"
+
+
+3. Fork the meego-ux-theme repository
+
+    Go to https://meego.gitorious.org/meego-ux/meego-ux-theme
+    and press the "Clone repository" button. This will make Gitorious
+    create a personal copy of the repository for you on which you can
+    work without having to have access to the "real" repository.
+
+    Select either "Me" as the owner or a group of your choice.
+
+
+4. Clone the repository locally
+
+    You now have a personal repository called "<USER>s-meego-ux-theme".
+
+    Clone it to your machine:
+    "git clone git@gitorious.org:~<USER>/meego-ux/<USER>s-meego-ux-theme.git"
+
+    Or with Tower:
+
+
+    Or with SparkleShare:
+    Select Gitorious and put in "" as the folder name.
+
+
+5. Set up your contact info
+
+    Add your details so others can see who made what changes.
+    This is only needed if you're using the command line interface.
+
+    "git config user.name Your Name"
+    "git config user.email your@email.com"
+
+
+5. Make your changes
+
+    Start improving things.
+    Commit the changes to your local copy:
+    "git add --all"
+    "git commit -m 'Tweak the slider widget'"
+
+    Or on Tower:
+    Click "Stage all" or tick the files you want to be added then
+    click commit in the toolbar.
+
+    Or on SparkleShare:
+    You're already done! :)
+
+
+7. Update your local copy
+
+    If changes are made in the upstream repository, you will
+    need to get them manually, to prevent conflicts in the future.
+
+    To merge them in:
+    "git pull --rebase git://gitorious.org/meego-ux/meego-ux-theme.git"
+
+
+8. Send your changes to Gitorious
+
+    "git push"
+
+    Or on Tower:
+    Click Push in the toolbar.
+
+    Or on SparkleShare:
+    You're already done! :)
+
+    Now your changes are pushed to Gitorious for everyone to see.
+
+
+9. Open a merge request
+
+    Now you should make the maintainers of the MeeGo UX Theme aware
+    of your changes, so they can merge them in.
+
+    Go to your personal copy of the repository through the web
+    interface, and click the "Request merge" button.
+
+    All done!
+
+
+
+===========================
+Creating a package with OBS
+===========================
+
+1. In your cloned version of meego-ux-theme:
+
+    - bump the version number in meego-theme-ux.pro
+    qmake
+    make dist
+
+
+2. Get a checkout from OBS (don't do it in your git checkout):
+
+    osc co devel:meego-ux meego-ux-theme
+
+
+3. Set up your details (this is a one time step)
+
+    - edit ~/.vcrc and add:
+        username="your name"
+        email="your email"
+    EDITOR="path to your favourite editor"
+
+
+4. Required steps to make a new release:
+
+    - bump the version number in the .yaml file
+    make
+    make spec
+    - delete the old .tar.gz
+    - copy over the .tar.gz created in step 1
+    osc ar && osc ci
+    osc results
+
+5. Look at results until you have succeeded. Now download and test your project (use other guides for this).
+
+6. Now send this to trunk
+	osc sr
+
+7. Make a tag for the release in git:
+
+    git tag "RELEASE_x.x.x"
+    git push --tags
+
+8. Now increment your version number in meego-ux-theme.pro
+
+
+
+=========================================
+Trying out your modifications on a tablet
+=========================================
+
+1.  Find out the IP address of the tablet:
+    ifconfig on the command line or go to the Connections area in the settings and expand your connected device.
+    
+2.  Copy the files to the device using your favourite FTP application.
+    Use the IP address you just discovered, port 22 (SFTP or SSH), and you username and password.
+    Put them in /usr/share/themes/YOUR-RESOLUTION/YOUR-PATH
+
+3.  Reboot and take a look.
+
+
+
+==============================
+Taking screenshots on a tablet
+==============================
+
+1. Get your MeeGo tablet and connect a keyboard
+
+2. Make sure you are connected to your local network through the Connectivity settings panel
+
+3. Go to the application that you would like to make a screenshot of 
+
+3. Press Ctrl + Alt + F1 and log in
+
+4. Install ImageMagick:
+
+    zypper in ImageMagick
+
+5. Take a screenshot:
+
+    xwd -root -display :0 | convert - screenshot.png
+
+6. Get the screenshot from your working machine connected to the local network:
+
+    Find out the IP address of the tablet:
+    ifconfig on the command line or go to the Connections area in the settings and expand your connected device.
+    
+    Now you can use your favourite FTP application to get the screenshot off the tablet.
+    Use the IP address you just discovered, port 22 (SFTP or SSH), and you username and password.
+    Now you can browse to /home/USERNAME/screenshot.png and copy it over.
+
+
+
+================================================
+Updating your tablet with the latest UX packages
+================================================
+
+1. Press Ctrl + Alt + F1 and log in
+
+2. Add the repository information:
+
+     nano /etc/zypp/repos.d/devel_meego-ux.conf
+
+   Type the following into the file:
+
+     [devel_meego-ux]
+     name=devel:meego-ux (Trunk)
+     type=rpm-md
+     baseurl=http://download.meego.com/live/devel:/meego-ux/Trunk/
+     gpgcheck=1
+     gpgkey=http://download.meego.com/live/devel:/meego-ux/Trunk/repodata/repomd.xml.key
+     enabled=1
+
+  Save it by pressing Ctrl + X
+
+3. Install the latest packages:
+
+     rm -Rf /var/cache/zypper
+     zypper refresh
+     zypper up
+     reboot
+
+
+==================================================
+Scale a set of images
+==================================================
+
+1. Get ImageMagick
+2. Copy your assets to a new folder
+3. Run the following command line snippet:
+
+for a in `find . -iname "*.png" `; do echo $a; mogrify "$a" -resize 166% ;done
